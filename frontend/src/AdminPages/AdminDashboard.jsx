@@ -7,9 +7,11 @@
 // }
 
 // export default AdminDashboard
+
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+
 import Layout from "./Components/Layout";
+import { Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import Users from "./pages/Users";
