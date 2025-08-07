@@ -11,9 +11,17 @@ export const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { _id: decoded.id }; // ✅ fixes the undefined error
+    
+    console.log("Decoded Token:", decoded); // 🟢 See what's inside
+
+    req.user = {
+      _id: decoded.id,
+      role: decoded.role,
+    };
+
     next();
   } catch (error) {
+    console.error("JWT Error:", error.message); // 🟢 Print exact error
     return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };

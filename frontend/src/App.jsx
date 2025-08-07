@@ -12,7 +12,8 @@ import ResetPassowrd from './pages/ResetPassowrd.jsx';
 import UserDashboard from './UserPages/UserDashboard.jsx';
 import AdminDashboard from './AdminPages/AdminDashboard.jsx';
 import ProtectedRoute from './Conditions/ProtectedRoute.jsx';
-import Unauthorized from './Conditions/Unauthorized.jsx'
+import Unauthorized from './Conditions/Unauthorized.jsx';
+// import AllQuestions from './components/AllQuestions';
 // const navigate = useNavigate();
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

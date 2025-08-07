@@ -21,8 +21,8 @@ export default function AdminDashboard() {
     <Layout>
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="products" element={<Products />} />
-        <Route path="users" element={<Users />} />
+        {/* <Route path="products" element={<Products />} /> */}
+        {/* <Route path="users" element={<Users />} /> */}
         <Route path="answer" element={<AdminAnswers />} />
       </Routes>
     </Layout>

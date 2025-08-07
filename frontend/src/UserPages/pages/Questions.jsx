@@ -11,7 +11,7 @@ const QuestionManager = () => {
   const [editingId, setEditingId] = useState(null);
   const [showDrawer, setShowDrawer] = useState(false);
 
-  const API = 'http://localhost:3004/api/question';
+  const API = `${import.meta.env.VITE_Backend_url}/api/question`;
 
   const axiosConfig = {
     headers: {
@@ -19,7 +19,6 @@ const QuestionManager = () => {
     },
   };
 
-  // Fetch all questions
   const fetchQuestions = async () => {
     try {
       const res = await axios.get(`${API}/my-questions`, axiosConfig);
@@ -33,20 +32,18 @@ const QuestionManager = () => {
     fetchQuestions();
   }, []);
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Add or Edit question
   const handleAddOrEdit = async (e) => {
     e.preventDefault();
     try {
       if (editingId) {
-        const res = await axios.put(`${API}/${editingId}`, formData, axiosConfig);
+        await axios.put(`${API}/${editingId}`, formData, axiosConfig);
         toast.success('Question updated successfully!');
       } else {
-        const res = await axios.post(API, formData, axiosConfig);
+        await axios.post(API, formData, axiosConfig);
         toast.success('Question created successfully!');
       }
       setFormData({ title: '', description: '', category: '' });
@@ -58,7 +55,6 @@ const QuestionManager = () => {
     }
   };
 
-  // Delete question
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${API}/${id}`, axiosConfig);
@@ -69,7 +65,6 @@ const QuestionManager = () => {
     }
   };
 
-  // Start editing
   const startEdit = (question) => {
     setFormData({
       title: question.title,
@@ -80,7 +75,6 @@ const QuestionManager = () => {
     setShowDrawer(true);
   };
 
-  // Open Drawer to Add
   const openAddDrawer = () => {
     setFormData({ title: '', description: '', category: '' });
     setEditingId(null);
@@ -91,7 +85,6 @@ const QuestionManager = () => {
     <div className="relative p-4 max-w-4xl mx-auto">
       <ToastContainer />
 
-      {/* Add/Edit Button */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Your Questions</h2>
         <button
@@ -102,7 +95,6 @@ const QuestionManager = () => {
         </button>
       </div>
 
-      {/* Questions List */}
       <ul className="space-y-3">
         {questions.map((q) => (
           <li
@@ -127,54 +119,53 @@ const QuestionManager = () => {
         ))}
       </ul>
 
-      {/* Slide Drawer */}
-    {showDrawer && (
-  <div className="fixed inset-0 flex justify-end z-50">
-    <div className="bg-white w-full sm:w-[400px] h-full p-5 shadow-lg overflow-auto transition-transform duration-300">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">{editingId ? 'Edit Question' : 'Add Question'}</h2>
-        <button onClick={() => setShowDrawer(false)} className="text-gray-600 text-2xl">
-          <AiOutlineClose />
-        </button>
-      </div>
-      <form onSubmit={handleAddOrEdit} className="space-y-4">
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={formData.title}
-          onChange={handleChange}
-          required
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="category"
-          placeholder="Category"
-          value={formData.category}
-          onChange={handleChange}
-          required
-          className="w-full p-2 border rounded"
-        />
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          {editingId ? 'Update' : 'Add'}
-        </button>
-      </form>
-    </div>
-  </div>
-)}
+      {showDrawer && (
+        <div className="fixed inset-0 flex justify-end z-50">
+          <div className="bg-white w-full sm:w-[400px] h-full p-5 shadow-lg overflow-auto transition-transform duration-300">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">{editingId ? 'Edit Question' : 'Add Question'}</h2>
+              <button onClick={() => setShowDrawer(false)} className="text-gray-600 text-2xl">
+                <AiOutlineClose />
+              </button>
+            </div>
+            <form onSubmit={handleAddOrEdit} className="space-y-4">
+              <input
+                type="text"
+                name="title"
+                placeholder="Title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+                className="w-full p-2 border rounded"
+              />
+              <input
+                type="text"
+                name="description"
+                placeholder="Description"
+                value={formData.description}
+                onChange={handleChange}
+                required
+                className="w-full p-2 border rounded"
+              />
+              <input
+                type="text"
+                name="category"
+                placeholder="Category"
+                value={formData.category}
+                onChange={handleChange}
+                required
+                className="w-full p-2 border rounded"
+              />
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                {editingId ? 'Update' : 'Add'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

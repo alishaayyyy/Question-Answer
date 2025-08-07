@@ -12,8 +12,8 @@ export default function AdminDashboard() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="questions" element={<QuestionManager />} />
-        <Route path="users" element={<Users />} />
-        <Route path="messages" element={<Messages />} />
+        {/* <Route path="users" element={<Users />} /> */}
+        {/* <Route path="messages" element={<Messages />} /> */}
       </Routes>
     </Layout>
   );

@@ -66,9 +66,9 @@ export const login = async (req, res) => {
       });
     }
     const jwtToken = jwt.sign(
-      {email:user.email,id:user._id},
+      {email:user.email,id:user._id,role: user.role},
       process.env.JWT_Secret,
-      {expiresIn:'24h'}
+      {expiresIn:'5d'}
     )
 
     res.status(200).json({
@@ -134,9 +134,9 @@ export const ForgotPassword = async (req, res) => {
       html: `
         <p>Hello ${user.name || "User"},</p>
         <p>Click the link below to reset your password:</p>
-        <a href="http://localhost:5173/reset-password/${token}" target="_blank">
-          Reset Password
-        </a>
+       <a href="${process.env.FrontendLink}reset-password/${token}" target="_blank">
+  Reset Password
+</a>
         <p>This link will expire in 15 minutes.</p>
       `,
     });

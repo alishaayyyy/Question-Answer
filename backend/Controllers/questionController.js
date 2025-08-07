@@ -19,14 +19,21 @@ export const createQuestion = async (req, res) => {
 };
 
 // ✅ Get All Questions (Homepage)
+
+
 export const getAllQuestions = async (req, res) => {
   try {
-    const questions = await Question.find().populate("user", "name email");
+    const questions = await Question.find()
+      .populate("user", "name email") // show user name and email
+      .sort({ createdAt: -1 });
+
     res.status(200).json({ success: true, questions });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error fetching questions" });
+    console.error("❌ Error in getAllQuestions:", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 // ✅ Get Single Question by ID
 export const getQuestionById = async (req, res) => {
@@ -97,24 +104,27 @@ export const getUserQuestions = async (req, res) => {
 
 // *******************Answer by admin*************************
 // Add this to your existing QuestionController.js
+export const submitAnswer = async (req, res) => {
+  try {
+    const updatedQuestion = await Question.findByIdAndUpdate(
+      req.params.id.trim(),
+      {
+        answer: req.body.answer,
+        status: "answered",
+      },
+      { new: true }
+    );
 
-// export const submitAnswer = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { answer } = req.body;
+    if (!updatedQuestion) {
+      return res.status(404).json({ message: "Question not found" });
+    }
 
-//     const question = await Question.findById(id);
-
-//     if (!question) {
-//       return res.status(404).json({ message: "Question not found" });
-//     }
-
-//     question.answer = answer;
-//     question.status = "answered";
-//     await question.save();
-
-//     res.status(200).json({ message: "Answer submitted successfully", question });
-//   } catch (error) {
-//     res.status(500).json({ message: "Server error", error: error.message });
-//   }
-// };
+    res.status(200).json({
+      message: "Answer submitted",
+      question: updatedQuestion,
+    });
+  } catch (error) {
+    console.error("Submit Answer Error:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

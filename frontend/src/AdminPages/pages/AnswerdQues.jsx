@@ -1,146 +1,124 @@
-// src/pages/AdminAnswers.jsx
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { FaReply } from "react-icons/fa";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AdminAnswers = () => {
   const [questions, setQuestions] = useState([]);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
-  const [answer, setAnswer] = useState("");
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [answerText, setAnswerText] = useState('');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const fetchQuestions = async () => {
+  const getAllQuestions = async () => {
     try {
-      setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_Backend_url}api/question`);
-      setQuestions(res.data.questions); // adjust if your API returns different shape
-    } catch (error) {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("https://deployment-practice-delta.vercel.app/api/question/all", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setQuestions(res.data.questions);
+    } catch (err) {
+      console.error("Error fetching questions", err);
       toast.error("Failed to load questions");
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchQuestions();
+    getAllQuestions();
   }, []);
 
-  // Prevent background scroll when drawer is open
-  useEffect(() => {
-    if (isDrawerOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [isDrawerOpen]);
-
-  const handleOpenDrawer = (question) => {
+  const handleAnswerClick = (question) => {
     setSelectedQuestion(question);
-    setAnswer(question.answer || "");
-    setIsDrawerOpen(true);
+    setAnswerText('');
+    setDrawerOpen(true);
   };
 
-  const handleSubmitAnswer = async () => {
-    if (!answer.trim()) return toast.error("Answer cannot be empty");
+  const handleSubmit = async () => {
+    if (!answerText.trim()) return toast.error("Answer cannot be empty.");
 
     try {
-      setSubmitting(true);
-     await axios.put(
-  `${import.meta.env.VITE_Backend_url}api/question/answer/${selectedQuestion._id}`,
-        { answer },
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `https://deployment-practice-delta.vercel.app/api/question/answer/${selectedQuestion._id}`,
+        { answer: answerText },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
       );
-
-      toast.success("Answer submitted successfully");
-      setIsDrawerOpen(false);
+      toast.success("Answer submitted successfully.");
+      setDrawerOpen(false);
       setSelectedQuestion(null);
-      setAnswer("");
-      fetchQuestions();
-    } catch (error) {
-      toast.error("Failed to submit answer");
-    } finally {
-      setSubmitting(false);
+      getAllQuestions();
+    } catch (err) {
+      console.error("Error submitting answer", err);
+      toast.error("Something went wrong.");
     }
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Questions You Have to Answer</h1>
+    <div className="p-6">
+      <ToastContainer position="top-right" />
+      <h1 className="text-2xl font-bold mb-4">Admin Answer Panel</h1>
 
-      {loading ? (
-        <p className="text-center text-blue-600 font-medium">Loading questions...</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full table-auto border border-gray-200">
-            <thead className="bg-blue-600 text-white">
-              <tr>
-                <th className="p-2">User Name</th>
-                <th className="p-2">Email</th>
-                <th className="p-2">Title</th>
-                <th className="p-2">Description</th>
-                <th className="p-2">Status</th>
-                <th className="p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {questions.map((q) => (
-                <tr key={q._id} className="border">
-                  <td className="p-2">{q.user?.name || "N/A"}</td>
-                  <td className="p-2">{q.user?.email || "N/A"}</td>
-                  <td className="p-2">{q.title}</td>
-                  <td className="p-2">{q.description}</td>
-                  <td className="p-2">{q.status}</td>
-                  <td className="p-2">
+      <div className="overflow-x-auto">
+        <table className="min-w-full border border-gray-300">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="px-4 py-2 border">User Name</th>
+              <th className="px-4 py-2 border">Email</th>
+              <th className="px-4 py-2 border">Question</th>
+              <th className="px-4 py-2 border">Answer</th>
+              <th className="px-4 py-2 border">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(questions) && questions.map((q) => (
+              <tr key={q._id} className="text-center">
+                <td className="border px-4 py-2">{q.user?.name || 'N/A'}</td>
+                <td className="border px-4 py-2">{q.user?.email || 'N/A'}</td>
+                <td className="border px-4 py-2">{q.title}</td>
+                <td className="border px-4 py-2">{q.answer || 'Not answered yet'}</td>
+                <td className="border px-4 py-2">
+                  {!q.answer && (
                     <button
-                      className="flex items-center gap-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition"
-                      onClick={() => handleOpenDrawer(q)}
+                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                      onClick={() => handleAnswerClick(q)}
                     >
-                      <FaReply /> Answer this Question
+                      Answer this Question
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      {/* Drawer */}
-      {isDrawerOpen && (
-        <div className="fixed top-0 right-0 h-full w-96 bg-white shadow-lg p-6 z-50">
-          <h2 className="text-xl font-bold mb-4">Answer Question</h2>
-          <p className="mb-2 font-medium text-blue-600">Title: {selectedQuestion?.title}</p>
-          <p className="mb-4">{selectedQuestion?.description}</p>
+      {/* Custom Drawer */}
+      {drawerOpen && (
+        <div className="fixed top-0 right-0 w-full sm:w-1/2 h-full bg-white shadow-lg p-6 z-50 transition-all duration-300">
+          <h2 className="text-xl font-bold mb-4">Write Answer</h2>
+          <p className="mb-2 font-semibold">Question:</p>
+          <p className="mb-4 text-gray-700">{selectedQuestion?.title}</p>
           <textarea
-            rows={5}
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            placeholder="Type your answer..."
-            className="w-full border p-2 mb-4 rounded"
+            className="w-full border border-gray-300 p-2 mb-4 h-32"
+            value={answerText}
+            onChange={(e) => setAnswerText(e.target.value)}
+            placeholder="Type your answer here..."
           />
-          <div className="flex gap-2">
+          <div className="flex justify-between">
             <button
-              onClick={handleSubmitAnswer}
-              disabled={submitting}
-              className={`px-4 py-2 rounded text-white ${
-                submitting ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-              }`}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              onClick={handleSubmit}
             >
-              {submitting ? "Submitting..." : "Submit Answer"}
+              Submit
             </button>
             <button
-              onClick={() => setIsDrawerOpen(false)}
-              className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+              className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+              onClick={() => setDrawerOpen(false)}
             >
               Cancel
             </button>
@@ -152,3 +130,8 @@ const AdminAnswers = () => {
 };
 
 export default AdminAnswers;
+
+
+
+// export default AdminAnswers;
+

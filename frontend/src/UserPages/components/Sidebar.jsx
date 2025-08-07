@@ -10,8 +10,8 @@ export default function Sidebar({ open, setOpen }) {
   const menu = [
     { name: "Dashboard", path: "/user/dashboard", icon: <FaTachometerAlt /> },
     { name: "Questions", path: "/user/dashboard/questions", icon: <FaEnvelope /> },
-    { name: "Users", path: "/user/dashboard/users", icon: <FaUsers /> },
-    { name: "Messages", path: "/user/dashboard/messages", icon: <FaEnvelope /> },
+    // { name: "Users", path: "/user/dashboard/users", icon: <FaUsers /> },
+    // { name: "Messages", path: "/user/dashboard/messages", icon: <FaEnvelope /> },
   ];
 
   const handleLogout = () => {

@@ -4,6 +4,7 @@
 // import { ToastContainer } from 'react-toastify';
 
 import Navbar from "../Components/Navbar.jsx"
+import AllQuestions from '../Components/AllQuestions.jsx';
 // import Slider from "../Components/Slider.jsx"
 
 function Home() {
@@ -12,6 +13,7 @@ function Home() {
     return (
         <div>
 <Navbar/>
+<AllQuestions/>
 {/* <Slider/> */}
         </div>
     )
