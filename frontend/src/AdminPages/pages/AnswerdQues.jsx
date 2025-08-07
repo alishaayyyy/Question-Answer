@@ -9,10 +9,12 @@ const AdminAnswers = () => {
   const [answerText, setAnswerText] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const BASE_URL = import.meta.env.VITE_Backend_url;
+
   const getAllQuestions = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("https://deployment-practice-delta.vercel.app/api/question/all", {
+      const res = await axios.get(`${BASE_URL}/api/question/all`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -40,7 +42,7 @@ const AdminAnswers = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `https://deployment-practice-delta.vercel.app/api/question/answer/${selectedQuestion._id}`,
+        `${BASE_URL}/api/question/answer/${selectedQuestion._id}`,
         { answer: answerText },
         {
           headers: {
@@ -130,7 +132,6 @@ const AdminAnswers = () => {
 };
 
 export default AdminAnswers;
-
 
 
 // export default AdminAnswers;

@@ -16,7 +16,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 // ********************* Auth Routes *******************************
-app.use('auth',AuthRouter )
+app.use('/auth',AuthRouter )
 // ********************** Crud Route ************************************
 app.use("/tasks", taskRoutes);
 // ********************** Questions routes ************************************

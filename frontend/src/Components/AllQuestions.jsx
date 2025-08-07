@@ -9,7 +9,7 @@ const AllQuestions = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await axios.get('https://deployment-practice-delta.vercel.app/api/question/all');
+       const res = await axios.get(`${import.meta.env.VITE_Backend_url}/api/question/all`);
         setQuestions(res.data.questions);
         setLoading(false);
       } catch (error) {
