@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from './Sidebarr';
-export default function Layout({ children }) {
+export default function LayoutUser({ children }) {
   const [open, setOpen] = useState(false); // mobile default closed
 
   return (
