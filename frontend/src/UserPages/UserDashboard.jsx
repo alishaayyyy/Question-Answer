@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Layout from "./Components/Layout";
+import Layout from "../Components/Layout";
 import Dashboard from "./pages/Dashboard";
 import QuestionManager from "./pages/Questions";
 import Users from "./pages/User";
